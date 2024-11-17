@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Calendar</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="calendar-container">
+        <div class="calendar-header">
+            <button id="prev-month" class="nav-button">◀</button>
+            <h2 id="current-month"></h2>
+            <button id="next-month" class="nav-button">▶</button>
+        </div>
+        <div class="labels-grid-outer">
+            <div class="labels-grid-inner">
+                <div class="day-label">Sun</div>
+                <div class="day-label">Mon</div>
+                <div class="day-label">Tue</div>
+                <div class="day-label">Wed</div>
+                <div class="day-label">Thu</div>
+                <div class="day-label">Fri</div>
+                <div class="day-label">Sat</div>
+            </div>
+        </div>
+        <div class="calendar-grid">
+            <div id="calendar-days" class="days-grid"></div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
