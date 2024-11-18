@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <h1>Create Account</h1>
+    <h3 id="message" style="color: red;">[[[MESSAGE]]]</h3>
+    <form id="form" action="/do_create_account" method="POST">
+        <div>
+            <label for="name">Username: </label>
+            <input type="text" name="name" id="name" value="" />
+        </div>
+        <div>
+            <label for="password">Password: </label>
+            <input type="password" name="password" id="password" value="" />
+        </div>
+        <div>
+            <button onclick="show_loading()" type="submit">Submit</button>
+        </div>
+    </form>
+    <p id="loading"></p>
+    <p><a href="/">Home</a></p>
+</body>
+<script>
+    async function show_loading() {
+        document.getElementById("message").style.display = 'none';
+        document.getElementById("form").style.display = 'none';
+        while (true) {
+            for(let i = 1; i <= 3; i++) {
+                document.getElementById("loading").innerText = "Creating account" + ".".repeat(i);
+                await new Promise(r => setTimeout(r, 300));
+            }
+        }
+    }
+</script>
+</html>
