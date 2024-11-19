@@ -45,14 +45,14 @@ pub fn insert_user_sqlite(username: String) -> Result<()> {
     Ok(())
 }
 
-fn update_daily(username: &str, new_daily: i32) -> Result<()> {
+pub fn update_daily(username: &str, new_daily: f32) -> Result<()> {
     let conn = Connection::open("budgets.db")?;
     let query = "UPDATE budget SET daily = ?1 WHERE username = ?2";
     conn.execute(query, params![new_daily, username])?;
     Ok(())
 }
 
-fn update_start_day(username: &str, start_day: i32) -> Result<()> {
+pub fn update_start_day(username: &str, start_day: u32) -> Result<()> {
     let conn = Connection::open("budgets.db")?;
     let query = "UPDATE budget SET start_day = ?1 WHERE username = ?2";
     conn.execute(query, params![start_day, username])?;

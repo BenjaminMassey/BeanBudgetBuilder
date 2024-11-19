@@ -29,6 +29,8 @@ async fn main() -> std::io::Result<()> {
             .service(endpoints::calendar)
             .service(endpoints::do_add_expendature)
             .service(endpoints::add_expendature)
+            .service(endpoints::do_update_account)
+            .service(endpoints::update_account)
     })
     .bind(("127.0.0.1", 8080))?
     .run()

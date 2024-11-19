@@ -235,3 +235,31 @@ pub async fn add_expendature() -> impl Responder {
 fn add_expendature_html() -> String {
     std::fs::read_to_string("./templates/add_expendature.html").unwrap()
 }
+
+#[derive(Deserialize)]
+struct AccountFormInfo {
+    daily: String,
+    start: String,
+}
+
+#[post("/do_update_account")]
+pub async fn do_update_account(
+    user: Option<Identity>,
+    _request: HttpRequest,
+    web::Form(form): web::Form<AccountFormInfo>,
+) -> impl Responder {
+    if let Ok(num) = form.daily.parse::<f32>() {
+        let _ = budget_data::update_daily(&user.as_ref().unwrap().id().unwrap(), num);
+    }
+    if let Ok(num) = form.start.parse::<u32>() {
+        let _ = budget_data::update_start_day(&user.as_ref().unwrap().id().unwrap(), num);
+    }
+    Redirect::to("/update_account").see_other()
+}
+#[get("/update_account")]
+pub async fn update_account() -> impl Responder {
+    HttpResponse::Ok().body(update_account_html())
+}
+fn update_account_html() -> String {
+    std::fs::read_to_string("./templates/update_account.html").unwrap()
+}
