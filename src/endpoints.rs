@@ -160,15 +160,22 @@ fn make_calendar_divs(now: &chrono::DateTime<chrono::Local>, username: &str) -> 
             now.offset().clone(),
         )
         .weekday();
+    let start_day = budget_data::get_start_day(username);
     let mut weekday_iter = chrono::Weekday::Sat;
     while weekday_iter != first_day_weekday {
         weekday_iter = weekday_iter.succ();
-        result += &make_calendar_div("", false);
+        result += &make_calendar_div("", "day");
     }
     while date_iter.month0() == now.month0() {
         result += &make_calendar_div(
             &make_calendar_label(username, &date_iter),
-            now.day0() == date_iter.day0(),
+            if now.day0() == date_iter.day0() { 
+                "today"
+            } else if date_iter.day() == start_day {
+                "start-day"
+            } else {
+                "day"
+            },
         );
         date_iter += chrono::Duration::days(1);
     }
@@ -189,12 +196,8 @@ fn make_calendar_label(username: &str, date: &chrono::NaiveDate) -> String {
         money_string,
     )
 }
-fn make_calendar_div(text: &str, today: bool) -> String {
-    format!(
-        r#"<div class="{}">{}</div>"#,
-        if today { "today" } else { "day" },
-        text,
-    )
+fn make_calendar_div(text: &str, class: &str) -> String {
+    format!(r#"<div class="{class}">{text}</div>"#)
 }
 
 #[derive(Deserialize)]
