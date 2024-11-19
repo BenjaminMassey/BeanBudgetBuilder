@@ -26,6 +26,27 @@ body {
     overflow: hidden;
 }
 
+.header-text-container {
+    display: flex;
+    width: 100%;
+    height: 20%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.header-text {
+    font-family: 'Arial', sans-serif;
+    font-size: 1.35em;
+    background: #0000FF;
+    color: #FFFFFF;
+    padding: 2% 4% 2% 4%;
+    border-radius: 10px;
+    text-align: center;
+    max-width: 400px;
+    width: 80%;
+}
+
 /* Calendar Header */
 .calendar-header {
     display: flex;
@@ -145,12 +166,28 @@ body {
     z-index: 1000; /* Make sure it's on top */
 }
 #overlay-content {
-    background: #333;
+    font-family: 'Arial', sans-serif;
+    font-size: 1.5em;
+    background: #3f3f3f;
     padding: 20px;
     border-radius: 10px;
     text-align: center;
     max-width: 400px;
     width: 80%;
+}
+#close-btn {
+    font-family: 'Arial', sans-serif;
+    font-size: 1em;
+    margin-top: 10px;
+    padding: 10px 20px;
+    border: none;
+    background-color: blue;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+#close-btn:hover {
+    background-color: darkblue;
 }
     </style>
 </head>
@@ -158,7 +195,13 @@ body {
     <div class="calendar-container">
         <br>
         <br>
-        <center><strong><u>[[[TOTAL_TEXT]]]</u></strong></center>
+        <div class="header-text-container">
+            <div class="header-text">
+                <strong>Current Audit Information</strong>
+                <br><br><br>
+                [[[HEADER_TEXT]]]
+            </div>
+        </div>
         <br>
         <br>
         <div class="calendar-header">

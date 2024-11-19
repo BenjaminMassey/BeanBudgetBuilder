@@ -127,18 +127,42 @@ fn calendar_html(username: &str) -> String {
         "[[[CALENDAR_DIVS]]]",
         &make_calendar_divs(&now, username),
     );
+    let today = chrono::NaiveDate::from_ymd_opt(
+        now.year(),
+        now.month(),
+        now.day(),
+    ).unwrap();
+    let daily = budget_data::get_daily(username);
+    let start_day = budget_data::get_start_day(username);
+    let period_start = chrono::NaiveDate::from_ymd_opt(
+        now.year(),
+        now.month(),
+        start_day,
+    ).unwrap();
+    let period_end = chrono::NaiveDate::from_ymd_opt(
+        if period_start.month0() == 11 { period_start.year() + 1 } else { period_start.year() },
+        if period_start.month0() == 11 { 1 } else { period_start.month() + 1 },
+        start_day,
+    ).unwrap();
+    let monthly_money = budget_data::get_monthly_total(
+        username, 
+        &today
+    );
+    let positive = monthly_money >= 0.;
+    let monthly_money_string = format!(
+        r#"<div style="color: {};">{}{}</div>"#,
+        if positive { "#95fa92" } else { "#f2a7a7" },
+        if positive { "$" } else { "-$" },
+        monthly_money.abs().to_string(),
+    );
     html = html.replace(
-        "[[[TOTAL_TEXT]]]",
+        "[[[HEADER_TEXT]]]",
         &format!(
-            "Net money this month: ${}",
-            &budget_data::get_monthly_total(
-                username, 
-                &chrono::NaiveDate::from_ymd_opt(
-                    now.year(),
-                    now.month(),
-                    now.day(),
-                ).unwrap()
-            ).to_string()
+            "<u>Daily Allotment</u>: ${}<br><br><u>Budget Period</u>: {} to {}<br><br><u>Net money this month</u>: <strong>{}</strong>",
+            &daily,
+            &format!("{}-{}-{}", period_start.year(), period_start.month(), period_start.day()),
+            &format!("{}-{}-{}", period_end.year(), period_end.month(), period_end.day()),
+            &monthly_money_string,
         ),
     );
     let mut date_iter = chrono::NaiveDate::from_ymd_opt(
@@ -194,11 +218,13 @@ fn make_calendar_divs(now: &chrono::DateTime<chrono::Local>, username: &str) -> 
         result += &make_calendar_div("", "day", "blank");
     }
     while date_iter.month0() == now.month0() {
+        let is_today = now.day0() == date_iter.day0();
+        let is_start = date_iter.day() == start_day;
         result += &make_calendar_div(
-            &make_calendar_label(username, &date_iter),
-            if now.day0() == date_iter.day0() { 
+            &make_calendar_label(username, &date_iter, is_today),
+            if is_today { 
                 "today"
-            } else if date_iter.day() == start_day {
+            } else if is_start {
                 "start-day"
             } else {
                 "day"
@@ -209,13 +235,17 @@ fn make_calendar_divs(now: &chrono::DateTime<chrono::Local>, username: &str) -> 
     }
     result
 }
-fn make_calendar_label(username: &str, date: &chrono::NaiveDate) -> String {
+fn make_calendar_label(username: &str, date: &chrono::NaiveDate, today: bool) -> String {
     let money = budget_data::get_day_money(username, date);
     let positive = !(money < 0.);
     let day_string = (date.day0() + 1).to_string();
     let money_string = format!(
         r#"<div style="color: {};">{}{}</div>"#,
-        if positive { "green" } else { "red" },
+        if positive { 
+            if today { "#95fa92" } else { "green" }
+        } else { 
+            if today { "#f2a7a7" } else { "red" }
+        },
         if positive { "$" } else { "-$" },
         money.abs().to_string(),
     );
