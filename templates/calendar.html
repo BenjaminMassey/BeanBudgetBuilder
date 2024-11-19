@@ -12,7 +12,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    height: 75%;
     background-color: #f9f9f9;
 }
 
@@ -130,13 +130,35 @@ body {
     color: #000;
     font-weight: bold;
 }
+#overlay {
+    display: none; /* Hidden by default */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Make sure it's on top */
+}
+#overlay-content {
+    background: #333;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    max-width: 400px;
+    width: 80%;
+}
     </style>
 </head>
 <body>
     <div class="calendar-container">
         <br>
         <br>
-        <center>[[[TOTAL_TEXT]]]</center>
+        <center><strong><u>[[[TOTAL_TEXT]]]</u></strong></center>
         <br>
         <br>
         <div class="calendar-header">
@@ -159,6 +181,12 @@ body {
             <div id="calendar-days" class="days-grid">
                 [[[CALENDAR_DIVS]]]
             </div>
+            <div id="overlay">
+                <div id="overlay-content">
+                  <p id="overlay-text">Hello! This is your overlay message.</p>
+                  <button id="close-btn">Close</button>
+                </div>
+            </div>
         </div>
         <br>
         <br>
@@ -172,5 +200,33 @@ body {
         <br>
         <br>
     </div>
+
+<script>
+    const overlay = document.getElementById('overlay');
+    const overlay_text = document.getElementById('overlay-text');
+    const closeButton = document.getElementById('close-btn');
+    
+    // Ensure the overlay starts hidden
+    overlay.style.display = 'none';
+
+    const texts = [
+        "[[[DAY_1_CONTENT]]]", "[[[DAY_2_CONTENT]]]", "[[[DAY_3_CONTENT]]]", "[[[DAY_4_CONTENT]]]", "[[[DAY_5_CONTENT]]]", "[[[DAY_6_CONTENT]]]", "[[[DAY_7_CONTENT]]]", "[[[DAY_8_CONTENT]]]", "[[[DAY_9_CONTENT]]]", "[[[DAY_10_CONTENT]]]", "[[[DAY_11_CONTENT]]]", "[[[DAY_12_CONTENT]]]", "[[[DAY_13_CONTENT]]]", "[[[DAY_14_CONTENT]]]", "[[[DAY_15_CONTENT]]]", "[[[DAY_16_CONTENT]]]", "[[[DAY_17_CONTENT]]]", "[[[DAY_18_CONTENT]]]", "[[[DAY_19_CONTENT]]]", "[[[DAY_20_CONTENT]]]", "[[[DAY_21_CONTENT]]]", "[[[DAY_22_CONTENT]]]", "[[[DAY_23_CONTENT]]]", "[[[DAY_24_CONTENT]]]", "[[[DAY_25_CONTENT]]]", "[[[DAY_26_CONTENT]]]", "[[[DAY_27_CONTENT]]]", "[[[DAY_28_CONTENT]]]", "[[[DAY_29_CONTENT]]]", "[[[DAY_30_CONTENT]]]", "[[[DAY_31_CONTENT]]]", "[[[DAY_32_CONTENT]]]"
+    ];
+    
+    for (let i = 0; i < texts.length; i++) {
+        let button = document.getElementById('day-' + (i + 1));
+        if (button != null) {
+            button.addEventListener('click', () => {
+                overlay_text.innerHTML = texts[i];
+                overlay.style.display = 'flex';
+            });
+        }
+    } 
+    
+    closeButton.addEventListener('click', () => {
+        overlay.style.display = 'none';
+    });
+</script>
+
 </body>
 </html>

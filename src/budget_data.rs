@@ -128,6 +128,20 @@ pub fn get_expendatures(username: &str) -> Vec<Expendature> {
     vec![]
 }
 
+
+pub fn get_day_expendatures(
+    username: &str, 
+    date: &chrono::NaiveDate,
+) -> Vec<Expendature> {
+    let mut expendatures: Vec<Expendature> = vec![];
+    for exp in get_expendatures(username) {
+        if &exp.date == date {
+            expendatures.push(exp);
+        }
+    }
+    expendatures
+}
+
 pub fn add_expendature(username: &str, expendature: &Expendature) {
     let mut data = String::new();
     for x in get_expendatures(username) {

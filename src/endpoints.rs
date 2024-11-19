@@ -141,7 +141,34 @@ fn calendar_html(username: &str) -> String {
             ).to_string()
         ),
     );
+    let mut date_iter = chrono::NaiveDate::from_ymd_opt(
+        now.year(),
+        now.month(),
+        1,
+    ).unwrap();
+    while date_iter.month() == now.month() {
+        html = html.replace(
+            &format!("[[[DAY_{}_CONTENT]]]", date_iter.day()),
+            &make_popup_content(username, &date_iter),
+        );
+        date_iter += chrono::Duration::days(1);
+    }
     html
+}
+
+fn make_popup_content(username: &str, date: &chrono::NaiveDate) -> String {
+    let mut text = String::new();
+    text += &format!(
+        "<br><strong>Expendatures for {}-{}-{}</strong><br>",
+        date.year(),
+        date.month(),
+        date.day(),
+    );
+    for exp in budget_data::get_day_expendatures(username, date) {
+        text += &format!("<br>${}: {}", exp.amount, exp.note);
+    }
+    text += "<br>";
+    text
 }
 
 fn make_calendar_divs(now: &chrono::DateTime<chrono::Local>, username: &str) -> String {
@@ -164,7 +191,7 @@ fn make_calendar_divs(now: &chrono::DateTime<chrono::Local>, username: &str) -> 
     let mut weekday_iter = chrono::Weekday::Sat;
     while weekday_iter != first_day_weekday {
         weekday_iter = weekday_iter.succ();
-        result += &make_calendar_div("", "day");
+        result += &make_calendar_div("", "day", "blank");
     }
     while date_iter.month0() == now.month0() {
         result += &make_calendar_div(
@@ -176,6 +203,7 @@ fn make_calendar_divs(now: &chrono::DateTime<chrono::Local>, username: &str) -> 
             } else {
                 "day"
             },
+            &format!("day-{}", date_iter.day()),
         );
         date_iter += chrono::Duration::days(1);
     }
@@ -184,6 +212,7 @@ fn make_calendar_divs(now: &chrono::DateTime<chrono::Local>, username: &str) -> 
 fn make_calendar_label(username: &str, date: &chrono::NaiveDate) -> String {
     let money = budget_data::get_day_money(username, date);
     let positive = !(money < 0.);
+    let day_string = (date.day0() + 1).to_string();
     let money_string = format!(
         r#"<div style="color: {};">{}{}</div>"#,
         if positive { "green" } else { "red" },
@@ -192,12 +221,12 @@ fn make_calendar_label(username: &str, date: &chrono::NaiveDate) -> String {
     );
     format!(
         "<div>{}</div>{}",
-        &(date.day0() + 1).to_string(),
+        &day_string,
         money_string,
     )
 }
-fn make_calendar_div(text: &str, class: &str) -> String {
-    format!(r#"<div class="{class}">{text}</div>"#)
+fn make_calendar_div(text: &str, class: &str, id: &str) -> String {
+    format!(r#"<div id="{id}" class="{class}">{text}</div>"#)
 }
 
 #[derive(Deserialize)]
