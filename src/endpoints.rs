@@ -127,6 +127,20 @@ fn calendar_html(username: &str) -> String {
         "[[[CALENDAR_DIVS]]]",
         &make_calendar_divs(&now, username),
     );
+    html = html.replace(
+        "[[[TOTAL_TEXT]]]",
+        &format!(
+            "Net money this month: ${}",
+            &budget_data::get_monthly_total(
+                username, 
+                &chrono::NaiveDate::from_ymd_opt(
+                    now.year(),
+                    now.month(),
+                    now.day(),
+                ).unwrap()
+            ).to_string()
+        ),
+    );
     html
 }
 
