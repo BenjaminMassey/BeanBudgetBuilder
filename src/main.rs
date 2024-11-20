@@ -29,7 +29,6 @@ async fn main() -> std::io::Result<()> {
             .service(endpoints::create_account_message)
             .service(endpoints::calendar)
             .service(endpoints::do_add_expendature)
-            .service(endpoints::add_expendature)
             .service(endpoints::do_update_account)
             .service(endpoints::update_account)
     })

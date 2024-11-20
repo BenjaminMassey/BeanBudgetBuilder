@@ -180,6 +180,8 @@ fn calendar_html(username: &str) -> String {
         date_iter += chrono::Duration::days(1);
     }
     html = html.replace("[[[USERNAME]]]", username);
+    html = html.replace("[[[CURRENT_YEAR]]]", &today.year().to_string());
+    html = html.replace("[[[CURRENT_MONTH]]]", &today.month().to_string());
     html
 }
 
@@ -288,14 +290,7 @@ pub async fn do_add_expendature(
             form.amount.parse::<f32>().unwrap(),
         )
     );
-    Redirect::to("/add_expendature").see_other()
-}
-#[get("/add_expendature")]
-pub async fn add_expendature() -> impl Responder {
-    HttpResponse::Ok().body(add_expendature_html())
-}
-fn add_expendature_html() -> String {
-    std::fs::read_to_string("./templates/add_expendature.html").unwrap()
+    Redirect::to("/").see_other()
 }
 
 #[derive(Deserialize)]

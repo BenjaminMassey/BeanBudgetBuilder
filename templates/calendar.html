@@ -228,6 +228,19 @@ body {
     max-width: 400px;
     width: 80%;
 }
+.expendature-popup {
+    display: None;
+    flex-direction: column;
+    text-align: center;
+    font-family: 'Arial', sans-serif;
+    font-size: 1em;
+}
+.expendature-input {
+    font-family: 'Arial', sans-serif;
+    font-size: 1em;
+    max-width: 200px;
+    width: 40%;
+}
     </style>
 </head>
 <body>
@@ -238,6 +251,7 @@ body {
               <a class="blue-button" href="/logout">Log Out</a>
             </div>
         </div>
+        <br><br>
         <div class="header-text-container">
             <div class="header-text">
                 <strong>Current Audit Information</strong>
@@ -273,6 +287,19 @@ body {
             <div id="overlay">
                 <div id="overlay-content">
                   <p id="overlay-text">Hello! This is your overlay message.</p>
+                  <div id="expendature-popup" class="expendature-popup">
+                    <form id="expendature-form" action="/do_add_expendature" method="POST">
+                        <input type="hidden" name="date" id="exp_date" value="" />
+                        <label for="amount">Amount:</label>
+                        <input type="text" id="exp_amount" name="amount" class="expendature-input" required>
+                        <br>
+                        <label for="note">Note:</label>
+                        <input type="text" id="exp_note" name="note" class="expendature-input" required>
+                        <br>
+                    </form>
+                  </div>
+                  <button id="add-expendature-button" class="blue-button">Add Expendature</button>
+                  <br>
                   <button id="close-btn" class="blue-button">Close</button>
                 </div>
             </div>
@@ -286,8 +313,16 @@ body {
     const overlay = document.getElementById('overlay');
     const overlay_text = document.getElementById('overlay-text');
     const closeButton = document.getElementById('close-btn');
+    const exp_button = document.getElementById("add-expendature-button");
+    const exp_popup = document.getElementById("expendature-popup");
+    const exp_form = document.getElementById("expendature-form");
+    const exp_date = document.getElementById("exp_date");
     
-    // Ensure the overlay starts hidden
+    let currentYear = "[[[CURRENT_YEAR]]]";
+    let currentMonth = "[[[CURRENT_MONTH]]]";
+    let currentDay = "";
+    let isFormOpen = false;
+
     overlay.style.display = 'none';
 
     const texts = [
@@ -300,13 +335,35 @@ body {
             button.addEventListener('click', () => {
                 overlay_text.innerHTML = texts[i];
                 overlay.style.display = 'flex';
+                currentDay = (i + 1).toString();
             });
         }
-    } 
+    }
     
     closeButton.addEventListener('click', () => {
         overlay.style.display = 'none';
+        exp_form.reset();
+        exp_popup.style.display = "none";
+        exp_button.textContent = "Add Expendature";
+        isFormOpen = false;
+        currentId = "";
     });
+
+    exp_button.addEventListener("click", () => {
+      if (!isFormOpen) {
+        exp_popup.style.display = "flex";
+        exp_button.textContent = "Submit Expendature";
+        isFormOpen = true;
+      } else {
+        if (exp_form.checkValidity()) {
+            exp_date.value = currentYear + "-" + currentMonth + "-" + currentDay;
+            exp_form.submit();
+        } else {
+          // TODO: helpful feedback
+        }
+      }
+    });
+
 </script>
 
 </body>
