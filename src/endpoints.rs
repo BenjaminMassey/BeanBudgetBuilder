@@ -15,15 +15,17 @@ use crate::budget_data;
 
 #[get("/")]
 pub async fn index(user: Option<Identity>) -> impl Responder {
-    let html = std::fs::read_to_string("./templates/index.html").unwrap();
-    let message = {
-        if let Some(user) = user {
-            format!("You are signed in as: {}", user.id().unwrap())
-        } else {
-            "You are not signed in.".to_owned()
-        }
-    };
-    HttpResponse::Ok().body(html.replace("[[[TEXT]]]", &message))
+    if user.is_some() {
+        return Redirect::to("/calendar").see_other();
+    }
+    Redirect::to("/landing").see_other()
+}
+
+#[get("/landing")]
+pub async fn landing() -> impl Responder {
+    HttpResponse::Ok().body(
+        std::fs::read_to_string("./templates/landing.html").unwrap()
+    )
 }
 
 #[derive(Deserialize)]
@@ -177,6 +179,7 @@ fn calendar_html(username: &str) -> String {
         );
         date_iter += chrono::Duration::days(1);
     }
+    html = html.replace("[[[USERNAME]]]", username);
     html
 }
 

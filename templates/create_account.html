@@ -1,34 +1,149 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Account - Bean Budget Builder</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom, #e8f5e9, #ffffff);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      color: #2e7d32;
+      text-align: center;
+    }
+
+    header {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+    }
+
+    header img {
+      height: 50px;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+    }
+
+    form {
+      background: white;
+      padding: 20px 30px;
+      border-radius: 10px;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+      text-align: left;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 10px;
+      font-size: 1rem;
+      border: 2px solid #2e7d32;
+      border-radius: 5px;
+      box-sizing: border-box;
+    }
+
+    .form-group input:focus {
+      border-color: #4caf50;
+      outline: none;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      font-size: 1rem;
+      background: #2e7d32;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background: #4caf50;
+    }
+
+    p {
+      margin-top: 15px;
+      font-size: 0.9rem;
+    }
+
+    p a {
+      color: #2e7d32;
+      text-decoration: none;
+    }
+
+    p a:hover {
+      text-decoration: underline;
+    }
+
+    footer {
+      position: absolute;
+      bottom: 10px;
+      font-size: 0.9rem;
+      color: #9e9e9e;
+    }
+  </style>
+</head>
+
 <body>
-    <h1>Create Account</h1>
-    <h3 id="message" style="color: red;">[[[MESSAGE]]]</h3>
-    <form id="form" action="/do_create_account" method="POST">
-        <div>
-            <label for="name">Username: </label>
-            <input type="text" name="name" id="name" value="" />
-        </div>
-        <div>
-            <label for="password">Password: </label>
-            <input type="password" name="password" id="password" value="" />
-        </div>
-        <div>
-            <button onclick="show_loading()" type="submit">Submit</button>
-        </div>
-    </form>
-    <p id="loading"></p>
-    <p><a href="/">Home</a></p>
+  <header>
+    <img src="logo-placeholder.png" alt="Bean Budget Builder Logo">
+  </header>
+
+  <h3 id="message" style="color: red;">[[[MESSAGE]]]</h3>
+
+  <h1>Create Your Account</h1>
+
+  <form action="/do_create_account" method="POST">
+    <div class="form-group">
+      <label for="name">Username</label>
+      <input type="text" id="name" name="name" placeholder="Enter your username" required>
+    </div>
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" placeholder="Create a password" required>
+    </div>
+    <button id="submit_button" onclick="show_loading()" type="submit">Create Account</button>
+  </form>
+
+  <p>Already have an account? <a href="/login">Log in here</a>.</p>
+
+  <footer>
+    © 2024 Bean Budget Builder. All rights reserved.
+  </footer>
 </body>
+
 <script>
     async function show_loading() {
-        document.getElementById("message").style.display = 'none';
-        document.getElementById("form").style.display = 'none';
         while (true) {
             for(let i = 1; i <= 3; i++) {
-                document.getElementById("loading").innerText = "Creating account" + ".".repeat(i);
+                document.getElementById("submit_button").innerText = "Creating account" + ".".repeat(i);
                 await new Promise(r => setTimeout(r, 300));
             }
         }
     }
 </script>
+
 </html>

@@ -19,6 +19,7 @@ async fn main() -> std::io::Result<()> {
                 secret_key.clone(),
             ))
             .service(endpoints::index)
+            .service(endpoints::landing)
             .service(endpoints::login)
             .service(endpoints::logout)
             .service(endpoints::do_login)

@@ -175,7 +175,7 @@ body {
     max-width: 400px;
     width: 80%;
 }
-#close-btn {
+.blue-button {
     font-family: 'Arial', sans-serif;
     font-size: 1em;
     margin-top: 10px;
@@ -186,20 +186,66 @@ body {
     border-radius: 5px;
     cursor: pointer;
 }
-#close-btn:hover {
+.blue-button:hover {
     background-color: darkblue;
+}
+.white-button {
+    font-family: 'Arial', sans-serif;
+    font-size: 1em;
+    margin-top: 10px;
+    padding: 10px 20px;
+    border: none;
+    background-color: white;
+    color: blue;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.white-button:hover {
+    background-color: darkgrey;
+}
+#account {
+    display: none; /* Hidden by default */
+    position: fixed;
+    top: 3%;
+    right: 0;
+    width: 15%;
+    height: 10%;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+#account-content {
+    display: flex;
+    flex-direction: column;
+    font-family: 'Arial', sans-serif;
+    font-size: 1.15em;
+    background: #3f3f3f;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    max-width: 400px;
+    width: 80%;
 }
     </style>
 </head>
 <body>
     <div class="calendar-container">
-        <br>
-        <br>
+        <div id="account">
+            <div id="account-content">
+              [[[USERNAME]]]
+              <a class="blue-button" href="/logout">Log Out</a>
+            </div>
+        </div>
         <div class="header-text-container">
             <div class="header-text">
                 <strong>Current Audit Information</strong>
                 <br><br><br>
                 [[[HEADER_TEXT]]]
+                <br><br>
+                <a class="white-button" href="/update_account">Update Account</a>
+                <br>
             </div>
         </div>
         <br>
@@ -227,21 +273,13 @@ body {
             <div id="overlay">
                 <div id="overlay-content">
                   <p id="overlay-text">Hello! This is your overlay message.</p>
-                  <button id="close-btn">Close</button>
+                  <button id="close-btn" class="blue-button">Close</button>
                 </div>
             </div>
         </div>
-        <br>
-        <br>
-        <center><a href="/update_account">Update Account</a></center>
-        <br>
-        <br>
-        <center><a href="/add_expendature">Add Expendature</a></center>
-        <br>
-        <br>
-        <center><a href="/">Return to Home</a></center>
-        <br>
-        <br>
+        <br><br>
+        <center><a class="blue-button" href="/add_expendature">Add Expendature</a></center>
+        <br><br>
     </div>
 
 <script>

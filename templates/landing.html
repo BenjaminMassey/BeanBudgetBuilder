@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bean Budget Builder</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom, #e8f5e9, #ffffff);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      color: #2e7d32;
+      text-align: center;
+    }
+
+    header {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+    }
+
+    header img {
+      height: 50px;
+    }
+
+    .hero {
+      max-width: 600px;
+    }
+
+    h1 {
+      font-size: 3rem;
+      margin: 0 0 20px;
+    }
+
+    p {
+      font-size: 1.2rem;
+      color: #4caf50;
+    }
+
+    .buttons {
+      margin-top: 30px;
+    }
+
+    .buttons a {
+      display: inline-block;
+      margin: 0 10px;
+      padding: 15px 30px;
+      font-size: 1rem;
+      text-decoration: none;
+      border-radius: 5px;
+      transition: background-color 0.3s ease;
+    }
+
+    .login {
+      background: white;
+      color: #2e7d32;
+      border: 2px solid #2e7d32;
+    }
+
+    .login:hover {
+      background: #2e7d32;
+      color: white;
+    }
+
+    .create-account {
+      background: #2e7d32;
+      color: white;
+      border: 2px solid #2e7d32;
+    }
+
+    .create-account:hover {
+      background: #4caf50;
+    }
+
+    footer {
+      position: absolute;
+      bottom: 10px;
+      font-size: 0.9rem;
+      color: #9e9e9e;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <img src="logo-placeholder.png" alt="Bean Budget Builder Logo">
+  </header>
+
+  <div class="hero">
+    <h1>Welcome to Bean Budget Builder</h1>
+    <p>Track your finances. Take control of your future.</p>
+    <div class="buttons">
+      <a href="/login" class="login">Log In</a>
+      <a href="/create_account" class="create-account">Create Account</a>
+    </div>
+  </div>
+
+  <footer>
+    © 2024 Bean Budget Builder. All rights reserved.
+  </footer>
+</body>
+
+</html>
