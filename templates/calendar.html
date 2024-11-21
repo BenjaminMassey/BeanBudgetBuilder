@@ -241,6 +241,19 @@ body {
     max-width: 200px;
     width: 40%;
 }
+.update-popup {
+    display: None;
+    flex-direction: column;
+    text-align: center;
+    font-family: 'Arial', sans-serif;
+    font-size: 1em;
+}
+.update-input {
+    font-family: 'Arial', sans-serif;
+    font-size: 1em;
+    max-width: 200px;
+    width: 40%;
+}
     </style>
 </head>
 <body>
@@ -257,8 +270,18 @@ body {
                 <strong>Current Audit Information</strong>
                 <br><br><br>
                 [[[HEADER_TEXT]]]
-                <br><br>
-                <a class="white-button" href="/update_account">Update Account</a>
+                <br>
+                <div id="update-popup" class="expendature-popup">
+                    <form id="update-form" action="/do_update_account" method="POST">
+                        <label for="daily">Daily Allotment:</label>
+                        <input type="text" id="daily" name="daily" class="update-input" required>
+                        <br>
+                        <label for="start">Start Day:</label>
+                        <input type="text" id="start" name="start" class="update-input" required>
+                        <br>
+                    </form>
+                  </div>
+                  <button id="update-button" class="white-button">Update Account</button>
                 <br>
             </div>
         </div>
@@ -304,9 +327,6 @@ body {
                 </div>
             </div>
         </div>
-        <br><br>
-        <center><a class="blue-button" href="/add_expendature">Add Expendature</a></center>
-        <br><br>
     </div>
 
 <script>
@@ -317,11 +337,15 @@ body {
     const exp_popup = document.getElementById("expendature-popup");
     const exp_form = document.getElementById("expendature-form");
     const exp_date = document.getElementById("exp_date");
+    const update_button = document.getElementById("update-button");
+    const update_popup = document.getElementById("update-popup");
+    const update_form = document.getElementById("update-form");
     
     let currentYear = "[[[CURRENT_YEAR]]]";
     let currentMonth = "[[[CURRENT_MONTH]]]";
     let currentDay = "";
-    let isFormOpen = false;
+    let isExpFormOpen = false;
+    let isUpdateFormOpen = false;
 
     overlay.style.display = 'none';
 
@@ -350,14 +374,28 @@ body {
     });
 
     exp_button.addEventListener("click", () => {
-      if (!isFormOpen) {
+      if (!isExpFormOpen) {
         exp_popup.style.display = "flex";
         exp_button.textContent = "Submit Expendature";
-        isFormOpen = true;
+        isExpFormOpen = true;
       } else {
         if (exp_form.checkValidity()) {
             exp_date.value = currentYear + "-" + currentMonth + "-" + currentDay;
             exp_form.submit();
+        } else {
+          // TODO: helpful feedback
+        }
+      }
+    });
+
+    update_button.addEventListener("click", () => {
+      if (!isUpdateFormOpen) {
+        update_popup.style.display = "flex";
+        update_button.textContent = "Submit Update";
+        isUpdateFormOpen = true;
+      } else {
+        if (update_form.checkValidity()) {
+            update_form.submit();
         } else {
           // TODO: helpful feedback
         }
