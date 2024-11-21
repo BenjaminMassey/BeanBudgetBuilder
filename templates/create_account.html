@@ -116,7 +116,7 @@
 
   <h1>Create Your Account</h1>
 
-  <form action="/do_create_account" method="POST">
+  <form id="create-form" action="/do_create_account" method="POST">
     <div class="form-group">
       <label for="name">Username</label>
       <input type="text" id="name" name="name" placeholder="Enter your username" required>
@@ -137,6 +137,11 @@
 
 <script>
     async function show_loading() {
+        const form = document.getElementById("create-form");
+        if (!form.checkValidity()) {
+            return;
+        }
+        const btn = document.getElementById("submit_button");
         while (true) {
             for(let i = 1; i <= 3; i++) {
                 document.getElementById("submit_button").innerText = "Creating account" + ".".repeat(i);

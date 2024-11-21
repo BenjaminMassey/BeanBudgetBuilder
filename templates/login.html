@@ -112,9 +112,11 @@
     <img src="logo-placeholder.png" alt="Bean Budget Builder Logo">
   </header>
 
+  <h3 id="message" style="color: red;">[[[MESSAGE]]]</h3>
+
   <h1>Log In</h1>
 
-  <form action="/do_login" method="POST">
+  <form id="login-form" action="/do_login" method="POST">
     <div class="form-group">
       <label for="name">Username</label>
       <input type="text" id="name" name="name" placeholder="Enter your username" required>
@@ -135,9 +137,14 @@
 
 <script>
     async function show_loading() {
+        const form = document.getElementById("login-form");
+        if (!form.checkValidity()) {
+            return;
+        }
+        const btn = document.getElementById("submit_button");
         while (true) {
             for(let i = 1; i <= 3; i++) {
-                document.getElementById("submit_button").innerText = "Logging In" + ".".repeat(i);
+                btn.innerText = "Logging In" + ".".repeat(i);
                 await new Promise(r => setTimeout(r, 300));
             }
         }
