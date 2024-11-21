@@ -7,17 +7,36 @@ mod account_data;
 mod endpoints;
 mod budget_data;
 
+#[derive(serde::Deserialize, Clone)]
+pub struct Server {
+    pub address: String,
+    pub port: String,
+    pub secure: bool,
+}
+
+#[derive(serde::Deserialize, Clone)]
+pub struct Settings {
+    pub server: Server,
+}
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+    let settings: Settings = toml::from_str(
+        &std::fs::read_to_string("./settings.toml").unwrap()
+    ).expect("Failed to load settings.toml");
     let secret_key = account_data::key_handle();
     db_init();
     HttpServer::new(move || {
         App::new()
             .wrap(IdentityMiddleware::default())
-            .wrap(SessionMiddleware::new(
-                CookieSessionStore::default(),
-                secret_key.clone(),
-            ))
+            .wrap(
+                SessionMiddleware::builder(
+                    CookieSessionStore::default(), 
+                    secret_key.clone()
+                )
+                .cookie_secure(settings.server.secure)
+                .build(),
+            )
             .service(endpoints::index)
             .service(endpoints::landing)
             .service(endpoints::login)
@@ -31,7 +50,10 @@ async fn main() -> std::io::Result<()> {
             .service(endpoints::do_add_expendature)
             .service(endpoints::do_update_account)
     })
-    .bind(("127.0.0.1", 8080))?
+    .bind((
+        settings.server.address,
+        settings.server.port.parse::<u16>().expect("Incorrect port."),
+    ))?
     .run()
     .await
 }
