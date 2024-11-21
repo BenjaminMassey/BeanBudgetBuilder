@@ -220,7 +220,7 @@ fn make_calendar_divs(now: &chrono::DateTime<chrono::Local>, username: &str) -> 
     let mut weekday_iter = chrono::Weekday::Sat;
     while weekday_iter != first_day_weekday {
         weekday_iter = weekday_iter.succ();
-        result += &make_calendar_div("", "day", "blank");
+        result += &make_calendar_div("", "blank-day", "blank");
     }
     while date_iter.month0() == now.month0() {
         let is_today = now.day0() == date_iter.day0();
