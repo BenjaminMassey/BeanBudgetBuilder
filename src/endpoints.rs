@@ -13,6 +13,12 @@ use serde::Deserialize;
 use crate::account_data;
 use crate::budget_data;
 
+pub async fn error() -> impl Responder {
+    HttpResponse::Ok().body(
+        std::fs::read_to_string("./templates/error.html").unwrap()
+    )
+}
+
 #[get("/")]
 pub async fn index(user: Option<Identity>) -> impl Responder {
     if user.is_some() {
@@ -115,7 +121,8 @@ pub async fn calendar(user: Option<Identity>) -> impl Responder {
         return HttpResponse::Ok().body(calendar_html(&user.id().unwrap()));
     }
     HttpResponse::Ok().body(
-        r#"<html>Failed.<br><br><a href="/">Return</a></html>"#)
+        std::fs::read_to_string("./templates/error.html").unwrap()
+    )
 }
 fn calendar_html(username: &str) -> String {
     let mut html = std::fs::read_to_string("./templates/calendar.html").unwrap();

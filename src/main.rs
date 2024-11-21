@@ -1,6 +1,6 @@
 use actix_identity::IdentityMiddleware;
 use actix_session::{storage::CookieSessionStore, SessionMiddleware};
-use actix_web::{App, HttpServer};
+use actix_web::{web, App, HttpServer};
 use rusqlite::Connection;
 
 mod account_data;
@@ -37,6 +37,7 @@ async fn main() -> std::io::Result<()> {
                 .cookie_secure(settings.server.secure)
                 .build(),
             )
+            .default_service(web::to(endpoints::error))
             .service(endpoints::index)
             .service(endpoints::landing)
             .service(endpoints::login)
