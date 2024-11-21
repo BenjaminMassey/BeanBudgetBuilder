@@ -49,6 +49,7 @@ async fn main() -> std::io::Result<()> {
             .service(endpoints::calendar)
             .service(endpoints::do_add_expendature)
             .service(endpoints::do_update_account)
+            .service(endpoints::do_remove_expendature)
     })
     .bind((
         settings.server.address,

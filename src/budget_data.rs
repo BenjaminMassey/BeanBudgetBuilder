@@ -151,6 +151,16 @@ pub fn add_expendature(username: &str, expendature: &Expendature) {
     let _ = update_expendatures_data(username, &data);
 }
 
+pub fn remove_expendature(username: &str, date: &chrono::NaiveDate, amount: f32) {
+    let mut data = String::new();
+    for x in get_expendatures(username) {
+        if !(&x.date == date && x.amount == amount) {
+            data += &x.string();
+        }
+    }
+    let _ = update_expendatures_data(username, &data);
+}
+
 pub fn get_daily(username: &str) -> f32 {
     let conn = Connection::open("budgets.db").unwrap();
     let mut stmt = conn

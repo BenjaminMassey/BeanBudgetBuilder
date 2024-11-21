@@ -187,14 +187,25 @@ fn calendar_html(username: &str) -> String {
 
 fn make_popup_content(username: &str, date: &chrono::NaiveDate) -> String {
     let mut text = String::new();
-    text += &format!(
-        "<br><strong>Expendatures for {}-{}-{}</strong><br>",
+    let date_string = format!(
+        "{}-{}-{}",
         date.year(),
         date.month(),
         date.day(),
     );
+    text += &format!("<br><strong>Expendatures for {date_string}</strong><br>");
     for exp in budget_data::get_day_expendatures(username, date) {
-        text += &format!("<br>${}: {}", exp.amount, exp.note);
+        text += &format!(
+            r#"<br><div class="expendature-item">${}: {}"#,
+            exp.amount,
+            exp.note,
+        );
+        text += std::fs::read_to_string("./templates/component_remove_expendature.html")
+            .unwrap()
+            .replace("[[[DATE]]]", &date_string)
+            .replace("[[[AMOUNT]]]", &exp.amount.to_string())
+            .as_ref();
+        text += "</div>";
     }
     text += "<br>";
     text
@@ -311,5 +322,30 @@ pub async fn do_update_account(
     if let Ok(num) = form.start.parse::<u32>() {
         let _ = budget_data::update_start_day(&user.as_ref().unwrap().id().unwrap(), num);
     }
+    Redirect::to("/").see_other()
+}
+
+#[derive(Deserialize)]
+struct RemoveFormInfo {
+    date: String,
+    amount: String,
+}
+
+#[post("/do_remove_expendature")]
+pub async fn do_remove_expendature(
+    user: Option<Identity>,
+    web::Form(form): web::Form<RemoveFormInfo>,
+) -> impl Responder {
+    let date_pieces: Vec<&str> = form.date.split("-").collect();
+    let date = chrono::NaiveDate::from_ymd_opt(
+        date_pieces[0].parse::<i32>().unwrap(),
+        date_pieces[1].parse::<u32>().unwrap(),
+        date_pieces[2].parse::<u32>().unwrap(),
+    ).unwrap();
+    budget_data::remove_expendature(
+        &user.unwrap().id().unwrap(),
+        &date,
+        form.amount.parse::<f32>().unwrap(),
+    );
     Redirect::to("/").see_other()
 }
