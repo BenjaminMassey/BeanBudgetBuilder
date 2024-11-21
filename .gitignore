@@ -1,4 +1,4 @@
 /target
 *.txt
 *.db
-*.pbkdf2
+*.actix

@@ -17,6 +17,20 @@ body {
     text-align: center;
 }
 
+header {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+header img {
+    height: 50px;
+}
+
 /* Calendar Container */
 .calendar-container {
     display: flex;
@@ -279,6 +293,10 @@ body {
     </style>
 </head>
 <body>
+    <header>
+        <img src="/logo.png" alt="Bean Budget Builder Logo">
+        Bean Budget Builder
+    </header>
     <div id="account">
         <div id="account-content">
           [[[USERNAME]]]

@@ -4,14 +4,14 @@ use std::io::Write;
 
 pub fn key_handle() -> Key {
     if std::path::Path::new("/etc/hosts").exists() {
-        let text = std::fs::read_to_string("key.pbkdf2").unwrap();
+        let text = std::fs::read_to_string("key.actix").unwrap();
         Key::from(text.as_bytes())
     } else {
         let key = Key::generate();
         let file = std::fs::File::options()
             .create(true)
             .write(true)
-            .open("key.pbkdf2");
+            .open("key.actix");
         let _ = file.unwrap().write_all(key.master());
         key
     }

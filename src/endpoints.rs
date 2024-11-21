@@ -4,9 +4,9 @@ use actix_web::web::Redirect;
 use actix_web::HttpResponse;
 use actix_web::{get, post, HttpMessage, HttpRequest, Responder};
 use chrono::Datelike;
-use pbkdf2::{
+use argon2::{
     password_hash::{rand_core::OsRng, PasswordHash, PasswordHasher, PasswordVerifier, SaltString},
-    Pbkdf2,
+    Argon2,
 };
 use serde::Deserialize;
 
@@ -49,7 +49,7 @@ pub async fn do_login(
     if result.is_none() {
         return Redirect::to("/login/User%20Not%20Found").see_other();
     }
-    if Pbkdf2
+    if Argon2::default()
         .verify_password(
             form.password.clone().as_bytes(),
             &PasswordHash::new(&result.unwrap().password).unwrap(),
@@ -84,7 +84,7 @@ pub async fn do_create_account(
         return Redirect::to("/create_account/Username%20already%20exists.").see_other();
     }
     let salt = SaltString::generate(&mut OsRng);
-    let password_hash = Pbkdf2
+    let password_hash = Argon2::default()
         .hash_password(form.password.as_bytes(), &salt)
         .unwrap()
         .to_string();
@@ -355,4 +355,9 @@ pub async fn do_remove_expendature(
         form.amount.parse::<f32>().unwrap(),
     );
     Redirect::to("/").see_other()
+}
+
+#[get("/logo.png")]
+pub async fn logo(_req_: HttpRequest) -> std::io::Result<actix_files::NamedFile> {
+    actix_files::NamedFile::open("./logo.png")
 }
