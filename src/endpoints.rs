@@ -186,7 +186,7 @@ fn calendar_html(username: &str, params: Option<CalendarParams>) -> String {
             username,
             cal_year,
             cal_month,
-            if params.is_none() { Some(now.day0()) } else { None },
+            if cal_month == now.month() { Some(now.day0()) } else { None },
             now.offset(),
         ),
     );
