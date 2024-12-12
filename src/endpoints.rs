@@ -118,23 +118,77 @@ pub async fn logout(user: Option<Identity>) -> impl Responder {
 #[get("/calendar")]
 pub async fn calendar(user: Option<Identity>) -> impl Responder {
     if let Some(user) = user {
-        return HttpResponse::Ok().body(calendar_html(&user.id().unwrap()));
+        return HttpResponse::Ok().body(calendar_html(&user.id().unwrap(), None));
     }
     HttpResponse::Ok().body(
         std::fs::read_to_string("./templates/error.html").unwrap()
     )
 }
-fn calendar_html(username: &str) -> String {
+struct CalendarParams {
+    year: u32,
+    month: u32,
+}
+#[get("/calendar/{date_param}")]
+pub async fn calendar_at_month(
+    user: Option<Identity>,
+    date_param: Option<web::Path<String>>,
+) -> impl Responder {
+    let date_string = &date_param.unwrap();
+    let date_pieces: Vec<&str> = date_string.split("-").collect();
+    let params = CalendarParams {
+        year: date_pieces[0].parse::<u32>().unwrap(),
+        month: date_pieces[1].parse::<u32>().unwrap(),
+    };
+    if let Some(user) = user {
+        return HttpResponse::Ok().body(calendar_html(&user.id().unwrap(), Some(params)));
+    }
+    HttpResponse::Ok().body(
+        std::fs::read_to_string("./templates/error.html").unwrap()
+    )
+}
+fn calendar_html(username: &str, params: Option<CalendarParams>) -> String {
     let mut html = std::fs::read_to_string("./templates/calendar.html").unwrap();
     let now = chrono::offset::Local::now();
-    let month = chrono::Month::try_from(now.month() as u8 - 1).unwrap().name();
+    let cal_year = if let Some(params) = params.as_ref() {
+        params.year as i32
+    } else {
+        now.year()
+    };
+    let cal_month = if let Some(params) = params.as_ref() {
+        params.month
+    } else {
+        now.month()
+    };
+    let month = chrono::Month::try_from(cal_month as u8).unwrap().name();
     html = html.replace(
         "[[[CURRENT_MONTH_YEAR]]]",
-        &format!("{} {}", &month, &now.year().to_string()),
+        &format!("{} {}", &month, &cal_year.to_string()),
+    );
+    html = html.replace(
+        "[[[PREV_MONTH_LINK]]]",
+        &format!(
+            "{}-{}",
+            if cal_month == 1 { cal_year - 1 } else { cal_year },
+            if cal_month == 1 { 12 } else { cal_month - 1 },
+        ),
+    );
+    html = html.replace(
+        "[[[NEXT_MONTH_LINK]]]",
+        &format!(
+            "{}-{}",
+            if cal_month == 12 { cal_year + 1 } else { cal_year },
+            if cal_month == 12 { 1 } else { cal_month + 1 },
+        ),
     );
     html = html.replace(
         "[[[CALENDAR_DIVS]]]",
-        &make_calendar_divs(&now, username),
+        &make_calendar_divs(
+            username,
+            cal_year,
+            cal_month,
+            if params.is_none() { Some(now.day0()) } else { None },
+            now.offset(),
+        ),
     );
     let today = chrono::NaiveDate::from_ymd_opt(
         now.year(),
@@ -144,8 +198,8 @@ fn calendar_html(username: &str) -> String {
     let daily = budget_data::get_daily(username);
     let start_day = budget_data::get_start_day(username);
     let period_start = chrono::NaiveDate::from_ymd_opt(
-        now.year(),
-        now.month(),
+        cal_year,
+        cal_month,
         start_day,
     ).unwrap();
     let period_end = chrono::NaiveDate::from_ymd_opt(
@@ -175,11 +229,11 @@ fn calendar_html(username: &str) -> String {
         ),
     );
     let mut date_iter = chrono::NaiveDate::from_ymd_opt(
-        now.year(),
-        now.month(),
+        cal_year,
+        cal_month,
         1,
     ).unwrap();
-    while date_iter.month() == now.month() {
+    while date_iter.month() == cal_month {
         html = html.replace(
             &format!("[[[DAY_{}_CONTENT]]]", date_iter.day()),
             &make_popup_content(username, &date_iter),
@@ -218,11 +272,17 @@ fn make_popup_content(username: &str, date: &chrono::NaiveDate) -> String {
     text
 }
 
-fn make_calendar_divs(now: &chrono::DateTime<chrono::Local>, username: &str) -> String {
+fn make_calendar_divs(
+    username: &str,
+    year: i32,
+    month: u32,
+    day: Option<u32>,
+    offset: &chrono::FixedOffset,
+) -> String {
     let mut result = String::new();
     let mut date_iter = chrono::NaiveDate::from_ymd_opt(
-        now.year(),
-        now.month(),
+        year,
+        month,
         1
     ).unwrap();
     let first_day_weekday = 
@@ -231,7 +291,7 @@ fn make_calendar_divs(now: &chrono::DateTime<chrono::Local>, username: &str) -> 
                 date_iter.clone(),
                 chrono::NaiveTime::from_hms_opt(0, 0, 0).unwrap(),
             ),
-            now.offset().clone(),
+            offset.clone(),
         )
         .weekday();
     let start_day = budget_data::get_start_day(username);
@@ -240,8 +300,8 @@ fn make_calendar_divs(now: &chrono::DateTime<chrono::Local>, username: &str) -> 
         weekday_iter = weekday_iter.succ();
         result += &make_calendar_div("", "blank-day", "blank");
     }
-    while date_iter.month0() == now.month0() {
-        let is_today = now.day0() == date_iter.day0();
+    while date_iter.month0() == month - 1 {
+        let is_today = if let Some(day) = day { date_iter.day0() == day } else { false };
         let is_start = date_iter.day() == start_day;
         result += &make_calendar_div(
             &make_calendar_label(username, &date_iter, is_today),
