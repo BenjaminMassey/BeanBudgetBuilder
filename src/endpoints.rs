@@ -198,8 +198,12 @@ fn calendar_html(username: &str, params: Option<CalendarParams>) -> String {
     let daily = budget_data::get_daily(username);
     let start_day = budget_data::get_start_day(username);
     let period_start = chrono::NaiveDate::from_ymd_opt(
-        cal_year,
-        cal_month,
+        now.year(),
+        if start_day <= now.day() {
+            now.month() 
+        } else {
+            if cal_month == 1 { 12 } else { now.month() - 1 }
+        },
         start_day,
     ).unwrap();
     let period_end = chrono::NaiveDate::from_ymd_opt(
