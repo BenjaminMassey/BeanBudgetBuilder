@@ -3,9 +3,9 @@ use rusqlite::{Connection, Result};
 use std::io::Write;
 
 pub fn key_handle() -> Key {
-    if std::path::Path::new("/etc/hosts").exists() {
-        let text = std::fs::read_to_string("key.actix").unwrap();
-        Key::from(text.as_bytes())
+    if std::path::Path::new("key.actix").exists() {
+        let key_data: Vec<u8> = std::fs::read("key.actix").unwrap();
+        Key::from(&key_data)
     } else {
         let key = Key::generate();
         let file = std::fs::File::options()

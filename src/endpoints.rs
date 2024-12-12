@@ -241,8 +241,8 @@ fn calendar_html(username: &str, params: Option<CalendarParams>) -> String {
         date_iter += chrono::Duration::days(1);
     }
     html = html.replace("[[[USERNAME]]]", username);
-    html = html.replace("[[[CURRENT_YEAR]]]", &today.year().to_string());
-    html = html.replace("[[[CURRENT_MONTH]]]", &today.month().to_string());
+    html = html.replace("[[[CURRENT_YEAR]]]", &cal_year.to_string());
+    html = html.replace("[[[CURRENT_MONTH]]]", &cal_month.to_string());
     html
 }
 
