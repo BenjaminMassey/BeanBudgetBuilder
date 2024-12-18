@@ -3,9 +3,8 @@ use actix_session::{storage::CookieSessionStore, SessionMiddleware};
 use actix_web::{web, App, HttpServer};
 use rusqlite::Connection;
 
-mod account_data;
+mod data;
 mod endpoints;
-mod budget_data;
 
 #[derive(serde::Deserialize, Clone)]
 pub struct Server {
@@ -24,7 +23,7 @@ async fn main() -> std::io::Result<()> {
     let settings: Settings = toml::from_str(
         &std::fs::read_to_string("./settings.toml").unwrap()
     ).expect("Failed to load settings.toml");
-    let secret_key = account_data::key_handle();
+    let secret_key = data::account::key_handle();
     db_init();
     HttpServer::new(move || {
         App::new()
@@ -37,22 +36,22 @@ async fn main() -> std::io::Result<()> {
                 .cookie_secure(settings.server.secure)
                 .build(),
             )
-            .default_service(web::to(endpoints::error))
-            .service(endpoints::index)
-            .service(endpoints::landing)
-            .service(endpoints::login)
-            .service(endpoints::logout)
-            .service(endpoints::do_login)
-            .service(endpoints::create_account)
-            .service(endpoints::do_create_account)
-            .service(endpoints::login_message)
-            .service(endpoints::create_account_message)
-            .service(endpoints::calendar)
-            .service(endpoints::calendar_at_month)
-            .service(endpoints::do_add_expendature)
-            .service(endpoints::do_update_account)
-            .service(endpoints::do_remove_expendature)
-            .service(endpoints::logo)
+            .default_service(web::to(endpoints::standard::error))
+            .service(endpoints::standard::index)
+            .service(endpoints::standard::landing)
+            .service(endpoints::standard::logo)
+            .service(endpoints::accounts::login)
+            .service(endpoints::accounts::logout)
+            .service(endpoints::accounts::do_login)
+            .service(endpoints::accounts::create_account)
+            .service(endpoints::accounts::do_create_account)
+            .service(endpoints::accounts::login_message)
+            .service(endpoints::accounts::create_account_message)
+            .service(endpoints::calendar::calendar)
+            .service(endpoints::calendar::calendar_at_month)
+            .service(endpoints::updates::do_add_expendature)
+            .service(endpoints::updates::do_update_account)
+            .service(endpoints::updates::do_remove_expendature)
     })
     .bind((
         settings.server.address,
